@@ -89,7 +89,21 @@ const searchButton = document.getElementById('search-button');
 const items = document.querySelectorAll('.item-catalogo');
 
 function executarPesquisa(event) {
+    event.preventDefault();
     
+    const query = searchInput.value.toLowerCase().trim();
+    
+    items.forEach(item => {
+        
+        const title = item.querySelector('.card-title').textContent.toLowerCase();
+        const category = item.getAttribute('data-categoria').toLowerCase();
+        
+        if (title.includes(query) || category.includes(query) || query === "") {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
 }
 
 searchButton.addEventListener('click', executarPesquisa);
@@ -97,7 +111,27 @@ searchButton.addEventListener('click', executarPesquisa);
 searchInput.addEventListener('keyup', (event) => {
     if (event.key === 'Enter') {
         executarPesquisa(event);
-    } else if (searchInput.ariaValueMax.trim() === "") {
+    } else if (searchInput.value.trim() === "") {
         executarPesquisa(event);
+    }
+});
+
+// 3. Atualiza os itens do catálogo ao carregar o HTML da página
+items.forEach((card, index) => {
+    const img = card.querySelector('img');
+    const title = card.querySelector('.card-title');
+    const category = card.querySelectorAll('.card-text')[0];
+    const description = card.querySelectorAll('.card-text')[1];
+    
+    const item = CATALOG_ITEMS.find(i => i.id === (index + 1));
+    
+    if (item) {
+        img.src = img.src.replace(/\?text=(.*)/, "?text=" + item.categoria.toUpperCase());
+        
+        title.textContent = item.titulo;
+        
+        category.textContent = "Categoria: " + item.categoria;
+        description.textContent = item.detalhes;
+        
     }
 });
