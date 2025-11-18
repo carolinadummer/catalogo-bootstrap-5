@@ -75,6 +75,7 @@ modalElement.addEventListener('show.bs.modal', function (event) {
         modalBody.innerHTML = detailsHTML;
         
         modalAction.onclick = () => {
+            adicionarItemCarrinho(item.id);
             console.log(`Ação: Item '${item.titulo}' (ID: ${item.id}) adicionado ao carrinho.`);
             
             const bsModal = bootstrap.Modal.getInstance(modalElement);
@@ -155,17 +156,65 @@ function obterCarrinhoDoNavegador() {
 
 function salvarCookieCarrinho(itensCarrinho) {
     try {
-    // Salva os itens do carrinho em formato JSON no navegador
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(itensCarrinho));
+        // Salva os itens do carrinho em formato JSON no navegador
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(itensCarrinho));
     } catch (e) {
         console.error("ERRO: Falha ao salvar carrinho no navegador. Erro: ", e);
     }
 }
 
-function adicionaItemCarrinho(itemId) {
+function atualizarContadorCarrinho() {
+    // Obtém itens existentes no carrinho
+    const carrinho = obterCarrinhoDoNavegador();
+    // Obtém o elemento HTML que exibe o número de itens no carrinho (Badge)
+    const carrinhoBadge = document.getElementById("cart-count");
+    
+    // Se o elemento que exibe o número de itens no carrinho existe 
+    if (carrinhoBadge) {
+        // Atualiuza o badge do carrinho com o número de itens no carrinho
+        carrinhoBadge.textContent = carrinho.length;
+        
+        if (carrinho.length > 0) {
+            // Remove a classe Boostrap 'd-none' para exibir o badge
+            carrinhoBadge.classList.remove('d-none');
+        } else {
+            // Adiciona a classe Boostrap 'd-none' para ocultar o badge
+            carrinhoBadge.classList.add('d-none');
+        }
+    }
+}
+
+function adicionarItemCarrinho(itemId) {
     // Obtém os itens atuais do carrinho
     const carrinho = obterCarrinhoDoNavegador();
     carrinho.push(itemId); // Adicionar o ID do item recebido como parâmetro da função ao carrinho
-    salvarCookieCarrinho(); // Atualiza o cookie do carrinho
-    atualizaContadorCarrinho(); // Atualiza o número de itens no HTML do carrinho navbar
+    salvarCookieCarrinho(carrinho); // Atualiza o cookie do carrinho
+    atualizarContadorCarrinho(); // Atualiza o número de itens no HTML do carrinho navbar
 }
+
+atualizarContadorCarrinho();
+
+// 5. Renderiza o conteúdo do carrinho
+const carrinho_btn = document.getElementById("cart-button");
+
+carrinho_btn.addEventListener("click", function() {
+    const carrinho_secao = document.getElementById("cart-section");
+    carrinho_secao.classList.toggle("d-none");
+    
+    if (carrinho_secao.classList.contains("d-none")) {
+        return;
+    }
+    
+    const carrinho_recibo = document.getElementById("cart-list");
+    carrinho_recibo.innerHTML = "";
+    
+    const itensCarrinho = obterCarrinhoDoNavegador();
+    
+    itensCarrinho.forEach(itemCarrinho => {
+        
+        const li = document.createElement("li");
+        li.innerHTML = itemCarrinho;
+        
+        carrinho_recibo.appendChild(li);
+    });
+});
