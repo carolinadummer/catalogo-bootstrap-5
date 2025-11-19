@@ -216,7 +216,7 @@ carrinho_btn.addEventListener("click", function() {
         
         const item = CATALOG_ITEMS.find(i => i.id === itemId);
         const li = document.createElement("li");
-        li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+        li.classList.add("list-group-item", "border-secondary", "d-flex", "justify-content-between", "align-items-center");
         li.innerHTML = `
         <div>
         <h6 class="mb-1">${item.titulo}</h6>
