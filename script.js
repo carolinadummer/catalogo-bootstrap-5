@@ -41,6 +41,8 @@ const CATALOG_ITEMS = [
     },
 ];
 
+const formatCurrency = (value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
 const modalElement = document.querySelector('#detalheModal');
 const modalTitle = modalElement.querySelector('.modal-title');
 const modalBody = modalElement.querySelector('.modal-body');
@@ -210,10 +212,17 @@ carrinho_btn.addEventListener("click", function() {
     
     const itensCarrinho = obterCarrinhoDoNavegador();
     
-    itensCarrinho.forEach(itemCarrinho => {
+    itensCarrinho.forEach(itemId => {
         
+        const item = CATALOG_ITEMS.find(i => i.id === itemId);
         const li = document.createElement("li");
-        li.innerHTML = itemCarrinho;
+        li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+        li.innerHTML = `
+        <div>
+        <h6 class="mb-1">${item.titulo}</h6>
+        </div>
+        <span class="fw-bold text-success">${formatCurrency(item.preco)}</span>
+        `;
         
         carrinho_recibo.appendChild(li);
     });
